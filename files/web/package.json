@@ -1,0 +1,11 @@
+{
+  "name": "web",
+  "version": "0.0.1",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "dev-server": "webpack-dev-server --progre --colors --host=0.0.0.0"
+  },
+  "author": "",
+  "license": "BSD-2-Clause"
+}

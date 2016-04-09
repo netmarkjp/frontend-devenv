@@ -1,0 +1,56 @@
+- name: basic setup
+  hosts: all
+  sudo: yes
+  vars:
+    DEV_USER: vagrant
+  tasks:
+    - shell: timedatectl set-timezone Asia/Tokyo && touch /root/done_set-timezone
+      args:
+        creates: /root/done_set-timezone
+      when: ansible_distribution == "Ubuntu"
+    - apt: name=language-pack-ja
+      when: ansible_distribution == "Ubuntu"
+    - shell: localectl set-locale LANG=ja_JP.UTF-8 && touch /root/done_localectl
+      args:
+        creates: /root/done_localectl
+      when: ansible_distribution == "Ubuntu"
+    - apt: update_cache=yes cache_valid_time=3600
+      when: ansible_distribution == "Ubuntu"
+
+- name: frontend-devenv product setup
+  hosts: all
+  sudo: yes
+  vars:
+    DEV_USER: vagrant
+  tasks:
+    - apt: name={{item}}
+      with_items:
+        - git
+        - vim
+        - nodejs
+        - nodejs-legacy
+        - npm
+    - file: state=directory owner={{DEV_USER}} path=~/.vim
+      sudo_user: "{{DEV_USER}}"
+    - git: repo=git://github.com/Shougo/neobundle.vim dest=~/.vim/bundle/neobundle.vim
+      sudo_user: "{{DEV_USER}}"
+
+- name: frontend-devenv project setup
+  hosts: all
+  sudo: yes
+  vars:
+    PROJECT_ROOT: /home/vagrant/web
+    DEV_USER: vagrant
+  tasks:
+    - shell: echo debug
+      name: debug_pin
+    - shell: |
+        (
+        [[ -d "{{PROJECT_ROOT}}" ]] || cp -a /vagrant/files/web {{PROJECT_ROOT}}
+        cd {{PROJECT_ROOT}}
+        npm install --save react@0.14.0 react-dom@0.14.0 redux react-router material-ui react-tap-event-plugin roboto-fontface axios 2>&1 | tee -a /tmp/npm.log
+        npm install --save-dev babel-cli babel-runtime babel-preset-es2015 babel-preset-react webpack webpack-dev-server babel-loader babel-core eslint eslint-config-airbnb eslint-plugin-react 2>&1 | tee -a /tmp/npm-dev.log
+        ) && sudo touch /root/done_setup
+      args:
+        creates: /root/done_setup
+      sudo_user: "{{DEV_USER}}"
