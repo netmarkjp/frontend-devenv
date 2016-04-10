@@ -48,7 +48,7 @@
         (
         test -d {{PROJECT_ROOT}} || cp -a /vagrant/files/web {{PROJECT_ROOT}}
         cd {{PROJECT_ROOT}}
-        npm install --save react@0.14.0 react-dom@0.14.0 redux react-router material-ui react-tap-event-plugin roboto-fontface axios 2>&1 | tee -a /tmp/npm.log
+        npm install --save react@0.14.3 react-dom@0.14.3 redux react-router material-ui react-tap-event-plugin roboto-fontface axios 2>&1 | tee -a /tmp/npm.log
         npm install --save-dev babel-cli babel-runtime babel-preset-es2015 babel-preset-react webpack webpack-dev-server babel-loader babel-core eslint eslint-config-airbnb eslint-plugin-react 2>&1 | tee -a /tmp/npm-dev.log
         )
       args:
